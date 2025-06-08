@@ -13,6 +13,7 @@ interface AuthState {
   login: (data: LoginRequest) => Promise<void>;
   register: (data: RegistrationRequest | RegistrationVerificationRequest) => Promise<void>;
   logout: () => void;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -52,5 +53,14 @@ export const useAuthStore = create<AuthState>((set) => ({
       accessToken: null,
       refreshToken: null,
     });
+  },
+
+  changePassword: async (currentPassword: string, newPassword: string) => {
+    try {
+      await authService.changePassword(currentPassword, newPassword);
+    } catch (error) {
+      console.error('Change password error:', error);
+      throw error;
+    }
   },
 }));

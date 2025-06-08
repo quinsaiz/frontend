@@ -11,6 +11,11 @@
     @apply antialiased bg-background-light text-gray-900 dark:bg-background-dark dark:text-gray-100 min-h-screen overflow-x-hidden;
   }
 
+  /* Lock scroll when modal is open */
+  body.modal-open {
+    @apply overflow-hidden;
+  }
+
   /* Custom scrollbar */
   ::-webkit-scrollbar {
     @apply w-1.5;
@@ -28,22 +33,101 @@
   ::selection {
     @apply bg-primary/20 text-gray-900 dark:text-white;
   }
+
+  /* Input number arrows */
+  input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Checkbox styles */
+  input[type='checkbox'] {
+    @apply appearance-none w-4 h-4 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-surface-dark
+    focus:outline-none focus:ring-2 focus:ring-primary/50
+    transition-all duration-200;
+  }
+
+  input[type='checkbox']:checked {
+    @apply bg-primary border-primary;
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+  }
 }
 
 @layer components {
+  /* Form styles */
   .input-field {
-    @apply mt-2 pr-10 block w-full px-4 py-1.5 bg-white dark:bg-[#242428] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm 
+    @apply mt-2 pr-10 block w-full px-4 py-1.5 bg-gray-50 dark:bg-background-dark border border-gray-300 dark:border-gray-700 rounded-md shadow-sm 
     focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
     text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400
     transition-all duration-200;
   }
 
+  .form-label {
+    @apply block text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-200;
+  }
+
+  .form-title {
+    @apply text-2xl font-bold text-center mb-10 text-gray-900 dark:text-gray-100;
+  }
+
+  .form-container {
+    @apply flex flex-col items-center justify-start sm:justify-start min-h-screen pt-16 sm:pt-24 px-4 sm:px-0;
+  }
+
+  .container-responsive {
+    @apply w-full max-w-md mx-auto p-4 sm:p-6;
+  }
+
+  /* Button styles */
   .btn-primary {
     @apply w-full py-2.5 px-4 border border-transparent rounded-md 
     shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark 
     focus:outline-none focus:ring-2 focus:ring-primary 
     disabled:opacity-50 transition-all duration-200
     hover:bg-primary-dark/90 active:bg-primary-dark mt-3;
+  }
+
+  .btn-secondary {
+    @apply flex items-center gap-2 px-4 py-2 text-sm 
+    bg-gray-50 dark:bg-surface-dark
+    border border-gray-200 dark:border-gray-700
+    hover:bg-gray-50 dark:hover:bg-gray-700
+    rounded-lg transition-all duration-200
+    shadow-sm hover:shadow-md;
+  }
+  .btn-search {
+    @apply absolute right-2 top-1/2 -translate-y-1/2 
+    bg-transparent bg-gray-100 dark:bg-gray-800
+    hover:bg-gray-200 dark:hover:bg-gray-700
+    text-gray-700 dark:text-gray-300
+    border border-gray-300 dark:border-gray-600
+    px-4 py-1.5 rounded-full text-sm font-medium 
+    disabled:opacity-50 disabled:cursor-not-allowed 
+    transition-all duration-200;
+  }
+
+  .btn-export {
+    @apply flex items-center gap-2 px-3 py-2 text-sm
+    bg-gray-100 dark:bg-gray-800
+    border border-gray-200 dark:border-gray-700
+    hover:bg-gray-50 dark:hover:bg-gray-700
+    rounded-lg transition-all duration-200
+    shadow-sm hover:shadow-md;
+  }
+
+  .btn-filter {
+    @apply flex items-center gap-2 px-4 py-2 text-sm
+    bg-gray-50 dark:bg-surface-dark
+    border border-gray-200 dark:border-gray-700
+    hover:bg-gray-50 dark:hover:bg-gray-700
+    rounded-lg transition-all duration-200
+    shadow-sm hover:shadow-md justify-center;
   }
 
   /* Link styles */
@@ -53,10 +137,21 @@
 
   /* Header styles */
   .nav-button {
-    @apply p-2 bg-white dark:bg-surface-dark 
-      border border-gray-200 dark:border-gray-700
-      rounded-lg transition-colors duration-200
-      hover:bg-gray-100 dark:hover:bg-gray-700;
+    @apply p-2 rounded-lg transition-all duration-200
+    hover:bg-gray-100 dark:hover:bg-gray-700
+    border border-gray-300 dark:border-gray-600;
+  }
+
+  .nav-button:hover {
+    @apply bg-gray-200 dark:bg-gray-700;
+  }
+
+  .nav-button:focus {
+    @apply outline-none ring-2 ring-blue-500/50;
+  }
+
+  .user-menu-active {
+    @apply bg-gray-100 dark:bg-gray-700;
   }
 
   /* Card styles */
@@ -65,31 +160,200 @@
     shadow-neomorphic-light dark:shadow-neomorphic-dark
     transition-all duration-300 
     hover:shadow-neomorphic-light-hover dark:hover:shadow-neomorphic-dark-hover
-    p-6 sm:p-8 w-full max-w-sm mx-auto;
-  }
-
-  /* Form group styles */
-  .form-label {
-    @apply block text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-200;
-  }
-
-  /* Form title styles */
-  .form-title {
-    @apply text-2xl font-bold text-center mb-10 text-gray-900 dark:text-gray-100;
-  }
-
-  /* Form container */
-  .form-container {
-    @apply flex flex-col items-center justify-start sm:justify-start min-h-screen pt-16 sm:pt-24 px-4 sm:px-0;
-  }
-
-  /* Responsive container */
-  .container-responsive {
-    @apply w-full max-w-sm mx-auto p-4 sm:p-6;
+    p-6 sm:p-8 w-full max-w-md mx-auto;
   }
 
   /* Icon styles */
   .icon-minimal {
     @apply h-5 w-5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-200;
+  }
+
+  /* Modal styles */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm
+    flex items-center justify-center z-50
+    overflow-hidden;
+  }
+
+  .modal-content {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-xl
+    w-full max-w-md mx-4 
+    max-h-[90vh] overflow-y-auto
+    relative;
+  }
+
+  .modal-content-large {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-xl
+    w-full max-w-4xl mx-4
+    max-h-[80vh]
+    relative flex flex-col;
+  }
+
+  .modal-scroll-area {
+    @apply flex-1 overflow-y-auto min-h-0;
+  }
+
+  .modal-scroll-area::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  .modal-scroll-area::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .modal-scroll-area::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+  }
+
+  .modal-scroll-area::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-500;
+  }
+
+  .modal-content-wrapper {
+    @apply p-6 pb-8;
+  }
+
+  /* Results styles */
+  .results-card {
+    @apply w-full p-6 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 transition-all duration-200;
+  }
+
+  .results-card:hover {
+    @apply shadow-lg border-gray-300 dark:border-gray-600;
+  }
+
+  /* Filter styles */
+  .filter-container {
+    @apply bg-gray-50 dark:bg-surface-dark/50 rounded-lg p-4 space-y-4 border border-gray-200 dark:border-gray-700;
+  }
+
+  .filter-label {
+    @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2;
+  }
+
+  .filter-checkbox {
+    @apply h-4 w-4 text-primary focus:ring-primary border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-surface-dark;
+  }
+
+  .filter-checkbox-label {
+    @apply text-gray-700 dark:text-gray-200 text-sm;
+  }
+
+  .filter-input {
+    @apply w-full px-4 py-2 text-sm
+    bg-white dark:bg-surface-dark
+    border border-gray-200 dark:border-gray-700
+    rounded-lg transition-all duration-200
+    focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
+    text-gray-900 dark:text-gray-100
+    placeholder-gray-500 dark:placeholder-gray-400;
+  }
+
+  .subfilter-input {
+    @apply w-full px-4 py-2 text-sm
+    bg-white dark:bg-background-dark
+    border border-gray-200 dark:border-gray-700
+    rounded-lg transition-all duration-200
+    focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
+    text-gray-900 dark:text-gray-100
+    placeholder-gray-500 dark:placeholder-gray-400;
+  }
+
+  .filter-select {
+    @apply w-40 px-4 py-2 text-sm
+    bg-white dark:bg-surface-dark
+    border border-gray-200 dark:border-gray-700
+    rounded-lg transition-all duration-200
+    focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
+    text-gray-900 dark:text-gray-100;
+  }
+
+  .filter-group {
+    @apply space-y-4;
+  }
+
+  .filter-icon {
+    @apply w-5 h-5 text-gray-500;
+  }
+
+  /* Status badge styles */
+  .status-badge {
+    @apply px-2 py-1 rounded-full text-xs font-medium;
+  }
+
+  .status-completed {
+    @apply text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30;
+  }
+
+  .status-failed {
+    @apply text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30;
+  }
+
+  .status-pending {
+    @apply text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30;
+  }
+
+  .status-default {
+    @apply text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-background-dark/30;
+  }
+
+  /* Loading spinner */
+  .spinner {
+    @apply animate-spin h-4 w-4 border-2 border-gray-300 border-t-blue-600 rounded-full;
+  }
+
+  /* Paper Card Styles */
+  .paper-card {
+    @apply bg-white dark:bg-surface-dark rounded-lg shadow p-4 transition-all duration-200 hover:shadow-lg;
+  }
+
+  .paper-title {
+    @apply text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 break-words;
+  }
+
+  .paper-abstract {
+    @apply text-sm text-gray-700 dark:text-gray-300 mt-4 line-clamp-3;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .paper-meta {
+    @apply mt-2 text-sm text-gray-600 dark:text-gray-400 space-y-1;
+  }
+
+  .paper-actions {
+    @apply mt-4 flex gap-2 flex-wrap;
+  }
+
+  /* Progress Bar Styles */
+  .progress-container {
+    @apply mt-8 p-6 bg-white dark:bg-surface-dark rounded-xl shadow-lg max-w-4xl mx-auto;
+  }
+
+  .progress-header {
+    @apply flex items-center justify-between mb-4;
+  }
+
+  .progress-title {
+    @apply text-lg font-semibold text-gray-900 dark:text-gray-100;
+  }
+
+  .progress-stats {
+    @apply text-sm text-gray-600 dark:text-gray-400;
+  }
+
+  .progress-bar-container {
+    @apply w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden;
+  }
+
+  .progress-bar {
+    @apply h-full rounded-full transition-all duration-300 ease-out;
+    background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+  }
+
+  .progress-status {
+    @apply mt-2 text-sm font-medium text-gray-600 dark:text-gray-400;
   }
 }

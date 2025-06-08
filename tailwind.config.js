@@ -26,7 +26,7 @@ export default {
         },
         surface: {
           light: '#F3F4F6',
-          dark: '#2D2E32',
+          dark: '#242428',
         },
       },
       boxShadow: {
