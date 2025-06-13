@@ -10,11 +10,7 @@ interface AuthState {
   isAuthenticated: boolean;
   accessToken: string | null;
   refreshToken: string | null;
-  user: {
-    id: number;
-    firstName: string;
-    lastName: string;
-  } | null;
+  phone: string | null;
   login: (data: LoginRequest) => Promise<void>;
   register: (data: RegistrationRequest | RegistrationVerificationRequest) => Promise<void>;
   logout: () => void;
@@ -25,20 +21,18 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: !!localStorage.getItem('access_token'),
   accessToken: localStorage.getItem('access_token'),
   refreshToken: localStorage.getItem('refresh_token'),
-  user: JSON.parse(
-    localStorage.getItem('user') === 'undefined' ? 'null' : localStorage.getItem('user') || 'null'
-  ),
+  phone: localStorage.getItem('phone'),
 
   login: async (data: LoginRequest) => {
     const response = await authService.login(data);
     localStorage.setItem('access_token', response.access_token);
     localStorage.setItem('refresh_token', response.refresh_token);
-    localStorage.setItem('user', JSON.stringify(response.user));
+    localStorage.setItem('phone', data.phone);
     set({
       isAuthenticated: true,
       accessToken: response.access_token,
       refreshToken: response.refresh_token,
-      user: response.user,
+      phone: data.phone,
     });
   },
 
@@ -58,12 +52,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user');
+    localStorage.removeItem('phone');
     set({
       isAuthenticated: false,
       accessToken: null,
       refreshToken: null,
-      user: null,
+      phone: null,
     });
   },
 

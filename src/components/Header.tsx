@@ -8,30 +8,20 @@ import {
   LockClosedIcon,
   SunIcon,
   MoonIcon,
-  ClockIcon,
 } from '@heroicons/react/24/outline';
 import { useTheme } from '../contexts/ThemeContext';
 import { ChangePassword } from './ChangePassword';
-import { PreviousSessions } from './PreviousSessions';
 import { AnimatePresence } from 'framer-motion';
-import { searchService } from '../services/api';
-import type { ScrapingSession } from '../types/search';
-import { sessionService } from '../services/sessionService';
-import { ApiError } from '../services/api';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const [showPreviousSessions, setShowPreviousSessions] = useState(false);
-  const [previousSessions, setPreviousSessions] = useState<ScrapingSession[]>([]);
-  const [isLoadingSessions, setIsLoadingSessions] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const user = useAuthStore((state) => state.user);
+  const phone = useAuthStore((state) => state.phone);
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -46,7 +36,7 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    if (showChangePassword || showPreviousSessions) {
+    if (showChangePassword) {
       document.body.classList.add('modal-open');
     } else {
       document.body.classList.remove('modal-open');
@@ -54,20 +44,7 @@ const Header = () => {
     return () => {
       document.body.classList.remove('modal-open');
     };
-  }, [showChangePassword, showPreviousSessions]);
-
-  const fetchPreviousSessions = async () => {
-    try {
-      setIsLoadingSessions(true);
-      const sessions = await searchService.getSessions();
-      setPreviousSessions(sessions);
-    } catch (err) {
-      console.error('Error fetching previous sessions:', err);
-      setPreviousSessions([]);
-    } finally {
-      setIsLoadingSessions(false);
-    }
-  };
+  }, [showChangePassword]);
 
   const handleLogout = () => {
     logout();
@@ -78,27 +55,6 @@ const Header = () => {
   const handleChangePasswordClick = () => {
     setShowChangePassword(true);
     setIsMenuOpen(false);
-  };
-
-  const handlePreviousSessionsClick = async () => {
-    setIsMenuOpen(false);
-    if (!showPreviousSessions) {
-      await fetchPreviousSessions();
-    }
-    setShowPreviousSessions(true);
-  };
-
-  const handleLoadSession = async (sessionId: number) => {
-    try {
-      await sessionService.checkSession(sessionId);
-      navigate(`/dashboard?session=${sessionId}`);
-    } catch (error: unknown) {
-      if (error instanceof ApiError) {
-        setError(error.message);
-      } else {
-        setError('Сталася помилка при відкритті сесії');
-      }
-    }
   };
 
   return (
@@ -130,15 +86,6 @@ const Header = () => {
                   </button>
                 ) : (
                   <>
-                    <button
-                      onClick={handlePreviousSessionsClick}
-                      className="nav-button"
-                      aria-label="View previous sessions"
-                      disabled={isLoadingSessions}
-                    >
-                      <ClockIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-                    </button>
-
                     <div className="relative" ref={menuRef}>
                       <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -150,7 +97,7 @@ const Header = () => {
                       </button>
 
                       {isMenuOpen && (
-                        <div className="absolute right-0 mt-2 w-64 bg-surface-light dark:bg-surface-dark rounded-xl shadow-neomorphic-light dark:shadow-neomorphic-dark py-1 z-50 overflow-hidden">
+                        <div className="absolute right-0 mt-2 w-52 bg-surface-light dark:bg-surface-dark rounded-xl shadow-neomorphic-light dark:shadow-neomorphic-dark py-1 z-50 overflow-hidden">
                           <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
                             <div className="flex items-center space-x-3">
                               <div className="flex-shrink-0">
@@ -160,10 +107,7 @@ const Header = () => {
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                                  {user?.firstName} {user?.lastName}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                  ID: {user?.id}
+                                  {phone}
                                 </p>
                               </div>
                             </div>
@@ -212,26 +156,6 @@ const Header = () => {
       <AnimatePresence mode="wait">
         {showChangePassword && <ChangePassword onClose={() => setShowChangePassword(false)} />}
       </AnimatePresence>
-
-      <AnimatePresence mode="wait">
-        {showPreviousSessions && (
-          <PreviousSessions
-            isOpen={showPreviousSessions}
-            onClose={() => setShowPreviousSessions(false)}
-            sessions={previousSessions}
-            onLoadSession={handleLoadSession}
-            mode="header"
-          />
-        )}
-      </AnimatePresence>
-
-      {error && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mt-2">
-            <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
-          </div>
-        </div>
-      )}
     </>
   );
 };

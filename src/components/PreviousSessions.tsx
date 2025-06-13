@@ -20,7 +20,6 @@ interface PreviousSessionsProps {
   onLoadSession?: (sessionId: number) => void;
   onExportSession?: (sessionId: number) => void;
   sessions?: ScrapingSession[];
-  mode?: 'header' | 'dashboard';
 }
 
 export const PreviousSessions = ({
@@ -28,7 +27,6 @@ export const PreviousSessions = ({
   onClose,
   onLoadSession,
   sessions: initialSessions,
-  mode = 'dashboard',
 }: PreviousSessionsProps) => {
   const [sessions, setSessions] = useState<ScrapingSession[]>(initialSessions || []);
   const [isLoading, setIsLoading] = useState(true);
@@ -353,7 +351,7 @@ export const PreviousSessions = ({
                           className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50 rounded-lg transition-all duration-200"
                         >
                           <DocumentTextIcon className="w-4 h-4" />
-                          {mode === 'header' ? 'Відкрити сесію' : 'Завантажити'}
+                          Відкрити сесію
                         </button>
                       )}
                     </div>

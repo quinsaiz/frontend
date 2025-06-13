@@ -8,6 +8,7 @@ import {
   DocumentTextIcon,
   AdjustmentsHorizontalIcon,
   ArrowDownTrayIcon,
+  ClockIcon,
 } from '@heroicons/react/24/outline';
 import { searchService } from '../services/api';
 import { ApiError } from '../services/api';
@@ -85,7 +86,7 @@ const Dashboard = () => {
 
   const handleInputChange = (
     field: keyof SearchParams,
-    value: string | number | boolean | string[]
+    value: string | number | boolean | string[] | undefined
   ) => {
     setSearchParams((prev) => ({
       ...prev,
@@ -417,6 +418,13 @@ const Dashboard = () => {
         </AnimatePresence>
 
         <div className="relative z-10 container mx-auto px-4 pt-20">
+          <div className="sticky z-50 flex justify-end">
+            <button onClick={() => setIsPreviousSessionsOpen(true)} className="btn-filter">
+              <ClockIcon className="w-5 h-5" />
+              Попередні сесії
+            </button>
+          </div>
+
           <motion.div
             animate={{
               y: hasResults ? -40 : 0,
@@ -475,8 +483,10 @@ const Dashboard = () => {
                   <CalendarDaysIcon className="filter-icon" />
                   <input
                     type="number"
-                    value={searchParams.year_from}
-                    onChange={(e) => handleInputChange('year_from', parseInt(e.target.value))}
+                    value={searchParams.year_from || ''}
+                    onChange={(e) =>
+                      handleInputChange('year_from', parseInt(e.target.value) || undefined)
+                    }
                     placeholder="Від року"
                     min="1900"
                     max="2099"
@@ -485,8 +495,10 @@ const Dashboard = () => {
                   <span className="text-gray-900">-</span>
                   <input
                     type="number"
-                    value={searchParams.year_to}
-                    onChange={(e) => handleInputChange('year_to', parseInt(e.target.value))}
+                    value={searchParams.year_to || ''}
+                    onChange={(e) =>
+                      handleInputChange('year_to', parseInt(e.target.value) || undefined)
+                    }
                     placeholder="До року"
                     min="1900"
                     max="2099"
@@ -584,9 +596,12 @@ const Dashboard = () => {
                             <label className="filter-label">Мінімум цитувань</label>
                             <input
                               type="number"
-                              value={searchParams.min_citation_count}
+                              value={searchParams.min_citation_count || ''}
                               onChange={(e) =>
-                                handleInputChange('min_citation_count', e.target.value)
+                                handleInputChange(
+                                  'min_citation_count',
+                                  parseInt(e.target.value) || undefined
+                                )
                               }
                               placeholder="напр. 10"
                               min="0"
@@ -639,13 +654,9 @@ const Dashboard = () => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 100,
-                  damping: 15,
-                }}
-                className="mt-8 w-full max-w-6xl mx-auto"
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="mt-8"
               >
                 <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
                   <div>
@@ -657,10 +668,6 @@ const Dashboard = () => {
                     </p>
                   </div>
                   <div className="flex gap-2 flex-wrap">
-                    <button onClick={() => setIsPreviousSessionsOpen(true)} className="btn-export">
-                      <DocumentTextIcon className="w-4 h-4" />
-                      Попередні сесії
-                    </button>
                     {sessionId && results.length > 0 && (
                       <>
                         <button
@@ -797,15 +804,14 @@ const Dashboard = () => {
               </motion.div>
             )}
           </AnimatePresence>
-
-          <PreviousSessions
-            isOpen={isPreviousSessionsOpen}
-            onClose={() => setIsPreviousSessionsOpen(false)}
-            onLoadSession={handleLoadSession}
-            onExportSession={handleExportSession}
-            mode="dashboard"
-          />
         </div>
+
+        <PreviousSessions
+          isOpen={isPreviousSessionsOpen}
+          onClose={() => setIsPreviousSessionsOpen(false)}
+          onLoadSession={handleLoadSession}
+          onExportSession={handleExportSession}
+        />
       </div>
     </>
   );
