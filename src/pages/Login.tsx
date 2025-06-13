@@ -41,14 +41,14 @@ const Login = () => {
         phone: formatPhoneNumber(data.phone),
       };
       await login(formattedData);
-      showSuccessToast('Успішний вхід в систему');
+      showSuccessToast('Successfully logged in');
       navigate('/dashboard');
     } catch (error) {
       const axiosError = error as AxiosError<{ non_field_errors?: string[] }>;
       if (axiosError.response?.data?.non_field_errors) {
         setError(axiosError.response.data.non_field_errors[0]);
       } else {
-        setError('Помилка входу в систему');
+        setError('Login error');
       }
     } finally {
       setIsLoading(false);
@@ -58,26 +58,26 @@ const Login = () => {
   return (
     <>
       <Helmet>
-        <title>Авторизація | Пошук наукових робіт</title>
+        <title>Login | Scientific Papers Search</title>
       </Helmet>
       <div className="form-container">
         <div className="container-responsive">
           <div className="card">
-            <h2 className="form-title">Вхід в систему</h2>
+            <h2 className="form-title">Login</h2>
             {error && <FormError message={error} onClose={() => setError(null)} />}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-1 group">
                 <label htmlFor="phone" className="form-label group-focus-within:text-primary">
-                  Номер телефону
+                  Phone Number
                 </label>
                 <div className="relative">
                   <input
                     {...register('phone', {
-                      required: "Це поле обов'язкове",
+                      required: 'This field is required',
                       validate: {
                         validPhone: (value) => {
                           if (!validatePhoneNumber(value)) {
-                            return getPhoneErrorMessage(value) || 'Невірний формат номера';
+                            return getPhoneErrorMessage(value) || 'Invalid phone number format';
                           }
                           return true;
                         },
@@ -99,11 +99,11 @@ const Login = () => {
 
               <div className="space-y-1 group">
                 <label htmlFor="password" className="form-label group-focus-within:text-primary">
-                  Пароль
+                  Password
                 </label>
                 <div className="relative">
                   <input
-                    {...register('password', { required: "Це поле обов'язкове" })}
+                    {...register('password', { required: 'This field is required' })}
                     type={showPassword ? 'text' : 'password'}
                     id="password"
                     className="input-field"
@@ -127,7 +127,7 @@ const Login = () => {
 
               <div className="space-y-4 mt-10">
                 <button type="submit" disabled={isLoading} className="btn-primary">
-                  {isLoading ? 'Завантаження...' : 'Увійти'}
+                  {isLoading ? 'Loading...' : 'Login'}
                 </button>
 
                 <div className="flex flex-col sm:flex-row justify-between text-sm gap-2 sm:gap-0 mt-4">
@@ -136,14 +136,14 @@ const Login = () => {
                     onClick={() => navigate('/register')}
                     className="link-primary"
                   >
-                    Зареєструватися
+                    Register
                   </button>
                   <button
                     type="button"
                     onClick={() => navigate('/reset-password')}
                     className="link-primary"
                   >
-                    Забули пароль?
+                    Forgot password?
                   </button>
                 </div>
               </div>

@@ -55,13 +55,13 @@ const Register = () => {
       await register(formattedData);
       setIsVerificationSent(true);
       verificationForm.reset({ code: '' });
-      showSuccessToast('Код підтвердження відправлено');
+      showSuccessToast('Verification code sent');
     } catch (error) {
       const axiosError = error as AxiosError<{ non_field_errors?: string[] }>;
       if (axiosError.response?.data?.non_field_errors) {
         setError(axiosError.response.data.non_field_errors[0]);
       } else {
-        setError('Помилка реєстрації');
+        setError('Registration error');
       }
     } finally {
       setIsLoading(false);
@@ -77,20 +77,20 @@ const Register = () => {
         code: data.code,
       };
       await register(verificationData);
-      showSuccessToast('Реєстрація успішна');
+      showSuccessToast('Registration successful');
       navigate('/dashboard');
     } catch (error) {
       const axiosError = error as AxiosError<{ non_field_errors?: string[] }>;
       if (axiosError.response?.data?.non_field_errors) {
         setError(axiosError.response.data.non_field_errors[0]);
       } else {
-        setError('Помилка підтвердження коду');
+        setError('Verification code error');
       }
 
       setVerificationAttempts((prev) => {
         const newAttempts = prev - 1;
         if (newAttempts <= 0) {
-          showErrorToast('Вичерпано всі спроби. Спробуйте зареєструватися знову.');
+          showErrorToast('All attempts exhausted. Please try registering again.');
           navigate('/');
           return 3;
         }
@@ -105,21 +105,21 @@ const Register = () => {
     <div className="form-container">
       <div className="container-responsive">
         <div className="card">
-          <h2 className="form-title">Реєстрація</h2>
+          <h2 className="form-title">Registration</h2>
           {error && <FormError message={error} onClose={() => setError(null)} />}
           {!isVerificationSent ? (
             <form onSubmit={handleSubmit(onSubmitRegistration)} className="space-y-4">
               <div className="space-y-1">
                 <label htmlFor="phone" className="form-label">
-                  Номер телефону
+                  Phone Number
                 </label>
                 <input
                   {...registerField('phone', {
-                    required: "Це поле обов'язкове",
+                    required: 'This field is required',
                     validate: {
                       validPhone: (value) => {
                         if (!validatePhoneNumber(value)) {
-                          return getPhoneErrorMessage(value) || 'Невірний формат номера';
+                          return getPhoneErrorMessage(value) || 'Invalid phone number format';
                         }
                         return true;
                       },
@@ -140,11 +140,11 @@ const Register = () => {
 
               <div className="space-y-1">
                 <label htmlFor="first_name" className="form-label">
-                  Ім'я
+                  First Name
                 </label>
                 <input
                   {...registerField('first_name', {
-                    required: "Це поле обов'язкове",
+                    required: 'This field is required',
                   })}
                   type="text"
                   id="first_name"
@@ -157,11 +157,11 @@ const Register = () => {
 
               <div className="space-y-1">
                 <label htmlFor="last_name" className="form-label">
-                  Прізвище
+                  Last Name
                 </label>
                 <input
                   {...registerField('last_name', {
-                    required: "Це поле обов'язкове",
+                    required: 'This field is required',
                   })}
                   type="text"
                   id="last_name"
@@ -174,19 +174,19 @@ const Register = () => {
 
               <div className="space-y-1">
                 <label htmlFor="password" className="form-label">
-                  Пароль
+                  Password
                 </label>
                 <div className="relative">
                   <input
                     {...registerField('password', {
-                      required: "Це поле обов'язкове",
+                      required: 'This field is required',
                       minLength: {
                         value: 6,
-                        message: 'Пароль повинен містити мінімум 6 символів',
+                        message: 'Password must be at least 6 characters long',
                       },
                       pattern: {
                         value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
-                        message: 'Пароль повинен містити тільки латинські літери та цифри',
+                        message: 'Password must contain only Latin letters and numbers',
                       },
                     })}
                     type={showPassword ? 'text' : 'password'}
@@ -213,13 +213,13 @@ const Register = () => {
 
               <div className="space-y-1">
                 <label htmlFor="confirm_password" className="form-label">
-                  Підтвердження паролю
+                  Confirm Password
                 </label>
                 <div className="relative">
                   <input
                     {...registerField('confirm_password', {
-                      required: "Це поле обов'язкове",
-                      validate: (value) => value === watch('password') || 'Паролі не співпадають',
+                      required: 'This field is required',
+                      validate: (value) => value === watch('password') || 'Passwords do not match',
                     })}
                     type={showConfirmPassword ? 'text' : 'password'}
                     id="confirm_password"
@@ -245,11 +245,11 @@ const Register = () => {
 
               <div className="space-y-4 mt-10">
                 <button type="submit" disabled={isLoading} className="btn-primary">
-                  {isLoading ? 'Завантаження...' : 'Зареєструватися'}
+                  {isLoading ? 'Loading...' : 'Register'}
                 </button>
                 <div className="text-center mt-4">
                   <Link to="/login" className="link-primary">
-                    Вже маєте акаунт? Увійти
+                    Already have an account? Login
                   </Link>
                 </div>
               </div>
@@ -261,16 +261,16 @@ const Register = () => {
             >
               <div className="space-y-1">
                 <label htmlFor="code" className="form-label">
-                  Код підтвердження
+                  Verification Code
                 </label>
                 <input
                   {...verificationForm.register('code', {
-                    required: "Це поле обов'язкове",
+                    required: 'This field is required',
                   })}
                   type="text"
                   id="code"
                   className="input-field"
-                  placeholder="Введіть код підтвердження"
+                  placeholder="Enter verification code"
                 />
                 {verificationForm.formState.errors.code && (
                   <p className="mt-0.5 text-sm text-red-400">
@@ -278,17 +278,17 @@ const Register = () => {
                   </p>
                 )}
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                  Залишилось спроб: {verificationAttempts}
+                  Remaining attempts: {verificationAttempts}
                 </p>
               </div>
 
               <div className="space-y-4 mt-10">
                 <button type="submit" disabled={isLoading} className="btn-primary">
-                  {isLoading ? 'Завантаження...' : 'Підтвердити'}
+                  {isLoading ? 'Loading...' : 'Verify'}
                 </button>
                 <div className="text-center mt-4">
                   <button onClick={() => navigate('/login')} className="link-primary">
-                    Повернутись до авторизації
+                    Return to login
                   </button>
                 </div>
               </div>

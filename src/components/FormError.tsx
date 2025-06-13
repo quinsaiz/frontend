@@ -33,7 +33,7 @@ export const FormError = ({ message, onClose }: FormErrorProps) => {
               className="inline-flex rounded-md text-red-400 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
               onClick={onClose}
             >
-              <span className="sr-only">Закрити</span>
+              <span className="sr-only">Close</span>
               <XMarkIcon className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>

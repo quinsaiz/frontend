@@ -53,7 +53,7 @@ export const PreviousSessions = ({
       if (error instanceof ApiError) {
         setError(error.message);
       } else {
-        setError('Сталася невідома помилка');
+        setError('An unknown error occurred');
       }
     } finally {
       setIsLoading(false);
@@ -80,15 +80,15 @@ export const PreviousSessions = ({
   const getStatusText = (status: string) => {
     switch (status) {
       case 'SUCCESS':
-        return 'Завершено';
+        return 'Completed';
       case 'FAILURE':
-        return 'Помилка';
+        return 'Error';
       case 'PENDING':
-        return 'Очікування';
+        return 'Pending';
       case 'RUNNING':
-        return 'В процесі';
+        return 'In Progress';
       case 'PARTIAL_SUCCESS':
-        return 'Частковий успіх';
+        return 'Partial Success';
       default:
         return status;
     }
@@ -128,7 +128,7 @@ export const PreviousSessions = ({
       if (error instanceof ApiError) {
         setError(error.message);
       } else {
-        setError('Сталася помилка при відкритті сесії');
+        setError('An error occurred while opening the session');
       }
     }
   };
@@ -176,7 +176,7 @@ export const PreviousSessions = ({
         >
           <div className="flex-none flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              Попередні сесії пошуку
+              Previous Search Sessions
             </h2>
             <button
               onClick={handleClose}
@@ -186,7 +186,7 @@ export const PreviousSessions = ({
             </button>
           </div>
           <div className="p-6 text-center">
-            <p className="text-gray-500 dark:text-gray-400">Немає попередніх сесій пошуку.</p>
+            <p className="text-gray-500 dark:text-gray-400">No previous search sessions.</p>
           </div>
           <div className="flex-none p-6 border-t border-gray-200 dark:border-gray-700">
             <div className="flex justify-end">
@@ -194,7 +194,7 @@ export const PreviousSessions = ({
                 onClick={handleClose}
                 className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg transition-all duration-200"
               >
-                Закрити
+                Close
               </button>
             </div>
           </div>
@@ -227,7 +227,7 @@ export const PreviousSessions = ({
       >
         <div className="flex-none flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            Попередні сесії пошуку
+            Previous Search Sessions
           </h2>
           <button
             onClick={handleClose}
@@ -269,27 +269,27 @@ export const PreviousSessions = ({
                         <div className="flex items-center gap-2">
                           <DocumentMagnifyingGlassIcon className="w-5 h-5 text-blue-500" />
                           <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Знайдено статей:{' '}
+                            Papers found:{' '}
                             <span className="font-medium">{session.papers_found}</span>
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
                           <DocumentCheckIcon className="w-5 h-5 text-green-500" />
                           <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Збережено: <span className="font-medium">{session.papers_saved}</span>
+                            Saved: <span className="font-medium">{session.papers_saved}</span>
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
                           <DocumentArrowDownIcon className="w-5 h-5 text-purple-500" />
                           <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Ліміт:{' '}
-                            <span className="font-medium">{session.limit || 'Не вказано'}</span>
+                            Limit:{' '}
+                            <span className="font-medium">{session.limit || 'Not specified'}</span>
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
                           <FunnelIcon className="w-5 h-5 text-orange-500" />
                           <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Застосовано фільтрів:{' '}
+                            Applied filters:{' '}
                             <span className="font-medium">{getAppliedFiltersCount(session)}</span>
                           </p>
                         </div>
@@ -299,7 +299,7 @@ export const PreviousSessions = ({
                         <div className="flex items-center gap-2">
                           <CalendarIcon className="w-5 h-5 text-indigo-500" />
                           <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Роки:{' '}
+                            Years:{' '}
                             <span className="font-medium">
                               {session.year_from} - {session.year_to}
                             </span>
@@ -311,7 +311,7 @@ export const PreviousSessions = ({
                         <div className="flex items-center gap-2">
                           <ExclamationCircleIcon className="w-5 h-5 text-red-500" />
                           <p className="text-sm text-red-600 dark:text-red-400">
-                            Помилок: <span className="font-medium">{session.errors_count}</span>
+                            Errors: <span className="font-medium">{session.errors_count}</span>
                           </p>
                         </div>
                       )}
@@ -351,7 +351,7 @@ export const PreviousSessions = ({
                           className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50 rounded-lg transition-all duration-200"
                         >
                           <DocumentTextIcon className="w-4 h-4" />
-                          Відкрити сесію
+                          Open Session
                         </button>
                       )}
                     </div>
@@ -368,7 +368,7 @@ export const PreviousSessions = ({
               onClick={handleClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg transition-all duration-200"
             >
-              Закрити
+              Close
             </button>
           </div>
         </div>

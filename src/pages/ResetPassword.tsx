@@ -50,13 +50,13 @@ const ResetPassword = () => {
       };
       setPhone(formattedData.phone);
       setIsVerificationSent(true);
-      showSuccessToast('Код підтвердження відправлено');
+      showSuccessToast('Verification code sent');
     } catch (error) {
       const axiosError = error as AxiosError<{ non_field_errors?: string[] }>;
       if (axiosError.response?.data?.non_field_errors) {
         setError(axiosError.response.data.non_field_errors[0]);
       } else {
-        setError('Помилка запиту на скидання паролю');
+        setError('Password reset request error');
       }
     } finally {
       setIsLoading(false);
@@ -73,20 +73,20 @@ const ResetPassword = () => {
         new_password: data.new_password,
       };
       await authService.confirmPasswordReset(confirmData);
-      showSuccessToast('Пароль успішно змінено');
+      showSuccessToast('Password successfully changed');
       navigate('/login');
     } catch (error) {
       const axiosError = error as AxiosError<{ non_field_errors?: string[] }>;
       if (axiosError.response?.data?.non_field_errors) {
         setError(axiosError.response.data.non_field_errors[0]);
       } else {
-        setError('Помилка підтвердження коду');
+        setError('Verification code error');
       }
 
       setVerificationAttempts((prev) => {
         const newAttempts = prev - 1;
         if (newAttempts <= 0) {
-          showErrorToast('Вичерпано всі спроби. Спробуйте відновити пароль знову.');
+          showErrorToast('All attempts exhausted. Please try resetting your password again.');
           navigate('/');
           return 3;
         }
@@ -101,22 +101,22 @@ const ResetPassword = () => {
     <div className="form-container">
       <div className="container-responsive">
         <div className="card">
-          <h2 className="form-title">Скидання паролю</h2>
+          <h2 className="form-title">Reset Password</h2>
           {error && <FormError message={error} onClose={() => setError(null)} />}
           {!isVerificationSent ? (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-1 group">
                 <label htmlFor="phone" className="form-label group-focus-within:text-primary">
-                  Номер телефону
+                  Phone Number
                 </label>
                 <div className="relative">
                   <input
                     {...registerField('phone', {
-                      required: "Це поле обов'язкове",
+                      required: 'This field is required',
                       validate: {
                         validPhone: (value) => {
                           if (!validatePhoneNumber(value)) {
-                            return getPhoneErrorMessage(value) || 'Невірний формат номера';
+                            return getPhoneErrorMessage(value) || 'Invalid phone number format';
                           }
                           return true;
                         },
@@ -138,11 +138,11 @@ const ResetPassword = () => {
 
               <div className="space-y-4 mt-10">
                 <button type="submit" disabled={isLoading} className="btn-primary">
-                  {isLoading ? 'Завантаження...' : 'Відправити код'}
+                  {isLoading ? 'Loading...' : 'Send Code'}
                 </button>
                 <div className="text-center">
                   <button type="button" onClick={() => navigate('/login')} className="link-primary">
-                    Повернутися до входу
+                    Return to Login
                   </button>
                 </div>
               </div>
@@ -154,16 +154,16 @@ const ResetPassword = () => {
             >
               <div className="space-y-1 group">
                 <label htmlFor="code" className="form-label group-focus-within:text-primary">
-                  Код підтвердження
+                  Verification Code
                 </label>
                 <input
                   {...verificationForm.register('code', {
-                    required: "Це поле обов'язкове",
+                    required: 'This field is required',
                   })}
                   type="text"
                   id="code"
                   className="input-field"
-                  placeholder="Введіть код підтвердження"
+                  placeholder="Enter verification code"
                 />
                 {verificationForm.formState.errors.code && (
                   <p className="mt-0.5 text-sm text-red-400">
@@ -171,7 +171,7 @@ const ResetPassword = () => {
                   </p>
                 )}
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                  Залишилось спроб: {verificationAttempts}
+                  Remaining attempts: {verificationAttempts}
                 </p>
               </div>
 
@@ -180,25 +180,25 @@ const ResetPassword = () => {
                   htmlFor="new_password"
                   className="form-label group-focus-within:text-primary"
                 >
-                  Новий пароль
+                  New Password
                 </label>
                 <div className="relative">
                   <input
                     {...verificationForm.register('new_password', {
-                      required: "Це поле обов'язкове",
+                      required: 'This field is required',
                       minLength: {
                         value: 6,
-                        message: 'Пароль повинен містити мінімум 6 символів',
+                        message: 'Password must be at least 6 characters long',
                       },
                       pattern: {
                         value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
-                        message: 'Пароль повинен містити тільки латинські літери та цифри',
+                        message: 'Password must contain only Latin letters and numbers',
                       },
                     })}
                     type={showPassword ? 'text' : 'password'}
                     id="new_password"
                     className="input-field"
-                    placeholder="Введіть новий пароль"
+                    placeholder="Enter new password"
                   />
                   <button
                     type="button"
@@ -221,11 +221,11 @@ const ResetPassword = () => {
 
               <div className="space-y-4 mt-10">
                 <button type="submit" disabled={isLoading} className="btn-primary">
-                  {isLoading ? 'Завантаження...' : 'Змінити пароль'}
+                  {isLoading ? 'Loading...' : 'Change Password'}
                 </button>
                 <div className="text-center">
                   <button type="button" onClick={() => navigate('/login')} className="link-primary">
-                    Повернутися до входу
+                    Return to Login
                   </button>
                 </div>
               </div>

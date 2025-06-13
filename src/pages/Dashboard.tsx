@@ -23,11 +23,6 @@ const Dashboard = () => {
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<Paper[]>([]);
   const [filterOptions, setFilterOptions] = useState<FilterOptions | null>(null);
-  const [progress, setProgress] = useState({
-    papersFound: 0,
-    papersSaved: 0,
-    status: '',
-  });
   const [isSearching, setIsSearching] = useState(false);
   const searchTimeoutRef = useRef<number | null>(null);
   const isSearchingRef = useRef(false);
@@ -116,7 +111,7 @@ const Dashboard = () => {
     try {
       const words = searchParams.query.trim().split(/\s+/);
       if (words.length < 3) {
-        setError('Будь ласка, введіть мінімум 3 слова для пошуку');
+        setError('Please enter at least 3 words for search');
         return;
       }
 
@@ -133,11 +128,6 @@ const Dashboard = () => {
       setLastCheck(null);
       setHasResults(false);
       setSessionId(null);
-      setProgress({
-        papersFound: 0,
-        papersSaved: 0,
-        status: 'Пошук в процесі...',
-      });
 
       const response = await searchService.startSearch(searchParams);
       console.log('Search response:', response);
@@ -151,7 +141,7 @@ const Dashboard = () => {
       if (error instanceof ApiError) {
         setError(error.message);
       } else {
-        setError('Сталася невідома помилка');
+        setError('An unknown error occurred');
       }
       setIsLoading(false);
       setIsSearching(false);
@@ -166,11 +156,6 @@ const Dashboard = () => {
     setIsLoading(false);
     setIsSearching(false);
     isSearchingRef.current = false;
-    setProgress({
-      papersFound: 0,
-      papersSaved: 0,
-      status: 'Зупинено',
-    });
   };
 
   const pollForResults = async (taskId: string, sessionId: number) => {
@@ -189,14 +174,6 @@ const Dashboard = () => {
       console.log('Poll response:', response);
       setLastCheck(response.current_time);
 
-      if (response.task_status) {
-        setProgress({
-          papersFound: response.task_status.papers_found,
-          papersSaved: response.task_status.papers_saved,
-          status: response.task_status.status,
-        });
-      }
-
       if (response.data_ready || response.task_completed || response.ready_for_download) {
         console.log('Data is ready, fetching results');
         await fetchResults(sessionId);
@@ -206,7 +183,7 @@ const Dashboard = () => {
         isSearchingRef.current = false;
       } else if (response.task_status?.status === 'FAILURE') {
         console.log('Task failed');
-        setError('Помилка при отриманні результатів');
+        setError('Error getting results');
         setIsLoading(false);
         setIsSearching(false);
         isSearchingRef.current = false;
@@ -225,7 +202,7 @@ const Dashboard = () => {
         }, 5000);
       } else {
         console.log('Unknown task status');
-        setError('Невідомий статус завдання');
+        setError('Unknown task status');
         setIsLoading(false);
         setIsSearching(false);
         isSearchingRef.current = false;
@@ -235,7 +212,7 @@ const Dashboard = () => {
       if (error instanceof ApiError) {
         setError(error.message);
       } else {
-        setError('Сталася невідома помилка');
+        setError('An unknown error occurred');
       }
       setIsLoading(false);
       setIsSearching(false);
@@ -258,14 +235,14 @@ const Dashboard = () => {
       } else {
         setResults([]);
         setHasResults(true);
-        setError('Не знайдено результатів');
+        setError('No results found');
       }
     } catch (error: unknown) {
       console.error('Error fetching results:', error);
       if (error instanceof ApiError) {
         setError(error.message);
       } else {
-        setError('Сталася невідома помилка');
+        setError('An unknown error occurred');
       }
       setHasResults(true);
     }
@@ -298,7 +275,7 @@ const Dashboard = () => {
       if (error instanceof ApiError) {
         setExportError(error.message);
       } else {
-        setExportError('Сталася невідома помилка при експорті');
+        setExportError('An unknown error occurred');
       }
     } finally {
       setIsExporting(false);
@@ -321,11 +298,6 @@ const Dashboard = () => {
     setSearchQuery('');
     setError('');
     setSessionId(null);
-    setProgress({
-      papersFound: 0,
-      papersSaved: 0,
-      status: '',
-    });
   };
 
   const iconAnimations = [
@@ -358,7 +330,7 @@ const Dashboard = () => {
       if (error instanceof ApiError) {
         setError(error.message);
       } else {
-        setError('Сталася помилка при завантаженні сесії');
+        setError('An error occurred');
       }
     }
   };
@@ -370,7 +342,7 @@ const Dashboard = () => {
       if (error instanceof ApiError) {
         setError(error.message);
       } else {
-        setError('Сталася помилка при експорті сесії');
+        setError('An error occurred');
       }
     }
   };
@@ -378,9 +350,9 @@ const Dashboard = () => {
   return (
     <>
       <Helmet>
-        <title>Пошук наукових робіт</title>
+        <title>Search for Scientific Papers</title>
       </Helmet>
-      <div className="min-h-screen relative overflow-hidden bg-white dark:bg-background-dark">
+      <div className="min-h-screen relative overflow-hidden bg-surface-light dark:bg-background-dark">
         <AnimatePresence>
           {!hasResults && (
             <motion.div
@@ -421,7 +393,7 @@ const Dashboard = () => {
           <div className="sticky z-50 flex justify-end">
             <button onClick={() => setIsPreviousSessionsOpen(true)} className="btn-filter">
               <ClockIcon className="w-5 h-5" />
-              Попередні сесії
+              Previous Sessions
             </button>
           </div>
 
@@ -446,7 +418,7 @@ const Dashboard = () => {
               }}
               className="text-3xl md:text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mt-6 mb-8"
             >
-              Пошук наукових робіт
+              Search for Scientific Papers
             </motion.h1>
 
             <div className="max-w-4xl mx-auto space-y-6">
@@ -455,7 +427,7 @@ const Dashboard = () => {
                   type="text"
                   value={searchParams.query}
                   onChange={(e) => handleInputChange('query', e.target.value)}
-                  placeholder="Введіть ключові слова для пошуку..."
+                  placeholder="Enter keywords for search..."
                   className="input-field w-full px-5 py-3 pl-12 pr-32 rounded-full shadow-neomorphic-light dark:shadow-neomorphic-dark border border-gray-200 dark:border-gray-700 focus:border-primary dark:focus:border-primary-dark"
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />
@@ -465,7 +437,7 @@ const Dashboard = () => {
                     onClick={handleStopSearch}
                     className="btn-search bg-red-500 hover:bg-red-600"
                   >
-                    Зупинити
+                    Stop
                   </button>
                 ) : (
                   <button
@@ -473,7 +445,7 @@ const Dashboard = () => {
                     disabled={isLoading || !searchParams.query.trim()}
                     className="btn-search"
                   >
-                    {isLoading ? 'Пошук...' : 'Знайти'}
+                    {isLoading ? 'Searching...' : 'Search'}
                   </button>
                 )}
               </div>
@@ -487,7 +459,7 @@ const Dashboard = () => {
                     onChange={(e) =>
                       handleInputChange('year_from', parseInt(e.target.value) || undefined)
                     }
-                    placeholder="Від року"
+                    placeholder="From Year"
                     min="1900"
                     max="2099"
                     className="filter-input w-28"
@@ -499,7 +471,7 @@ const Dashboard = () => {
                     onChange={(e) =>
                       handleInputChange('year_to', parseInt(e.target.value) || undefined)
                     }
-                    placeholder="До року"
+                    placeholder="To Year"
                     min="1900"
                     max="2099"
                     className="filter-input w-28"
@@ -513,11 +485,11 @@ const Dashboard = () => {
                     onChange={(e) => handleInputChange('limit', parseInt(e.target.value))}
                     className="filter-select"
                   >
-                    <option value={10}>10 результатів</option>
-                    <option value={25}>25 результатів</option>
-                    <option value={50}>50 результатів</option>
-                    <option value={100}>100 результатів</option>
-                    <option value={200}>200 результатів</option>
+                    <option value={10}>10 results</option>
+                    <option value={25}>25 results</option>
+                    <option value={50}>50 results</option>
+                    <option value={100}>100 results</option>
+                    <option value={200}>200 results</option>
                   </select>
                 </div>
 
@@ -526,7 +498,7 @@ const Dashboard = () => {
                   className="btn-filter"
                 >
                   <AdjustmentsHorizontalIcon className="filter-icon" />
-                  Розширені
+                  Advanced
                   <span
                     className={`transition-transform ${showAdvancedFilters ? 'rotate-180' : ''}`}
                   >
@@ -535,7 +507,7 @@ const Dashboard = () => {
                 </button>
 
                 <button onClick={resetFilters} className="btn-filter">
-                  Скинути
+                  Reset
                 </button>
               </div>
 
@@ -553,7 +525,7 @@ const Dashboard = () => {
                   >
                     <div className="filter-container">
                       <div>
-                        <label className="filter-label">Галузі науки</label>
+                        <label className="filter-label">Fields of Study</label>
                         <div className="max-h-32 overflow-y-auto border border-gray-200 dark:border-gray-600 rounded p-2 bg-white dark:bg-background-dark">
                           <div className="grid grid-cols-2 md:grid-cols-3 gap-1">
                             {filterOptions.fields_of_study.map((field) => (
@@ -573,7 +545,7 @@ const Dashboard = () => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="filter-label">Типи публікацій</label>
+                          <label className="filter-label">Publication Types</label>
                           <div className="space-y-1">
                             {filterOptions.publication_types.map((type) => (
                               <label key={type} className="flex items-center space-x-2">
@@ -593,7 +565,7 @@ const Dashboard = () => {
 
                         <div className="space-y-3">
                           <div>
-                            <label className="filter-label">Мінімум цитувань</label>
+                            <label className="filter-label">Minimum Citations</label>
                             <input
                               type="number"
                               value={searchParams.min_citation_count || ''}
@@ -603,9 +575,9 @@ const Dashboard = () => {
                                   parseInt(e.target.value) || undefined
                                 )
                               }
-                              placeholder="напр. 10"
+                              placeholder="e.g., 10"
                               min="0"
-                              className="subfilter-input"
+                              className="filter-input dark:bg-background-dark"
                             />
                           </div>
 
@@ -620,7 +592,7 @@ const Dashboard = () => {
                                 className="filter-checkbox"
                               />
                               <span className="filter-checkbox-label font-medium">
-                                Тільки відкритий доступ
+                                Only Open Access
                               </span>
                             </label>
                           </div>
@@ -645,7 +617,7 @@ const Dashboard = () => {
 
           {isLoading && (
             <div className="mt-8 text-center">
-              <p className="text-xl text-gray-600 dark:text-gray-400">Пошук в процесі...</p>
+              <p className="text-xl text-gray-600 dark:text-gray-400">Searching...</p>
             </div>
           )}
 
@@ -661,10 +633,10 @@ const Dashboard = () => {
                 <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
                   <div>
                     <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                      Результати пошуку
+                      Search Results
                     </h2>
                     <p className="text-gray-600 dark:text-gray-400">
-                      Знайдено {results.length} результатів для "{searchQuery}"
+                      Found {results.length} results for "{searchQuery}"
                     </p>
                   </div>
                   <div className="flex gap-2 flex-wrap">
@@ -692,7 +664,7 @@ const Dashboard = () => {
                           className="btn-export"
                         >
                           <ArrowDownTrayIcon className="w-4 h-4" />
-                          Автори
+                          Authors
                         </button>
                       </>
                     )}
@@ -713,34 +685,32 @@ const Dashboard = () => {
                           <div className="flex justify-between items-start">
                             <h3 className="paper-title flex-1">{paper.title}</h3>
                             {paper.is_open_access && (
-                              <span className="ml-4 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded whitespace-nowrap">
-                                Open Access
-                              </span>
+                              <span className="status-badge status-completed">Open Access</span>
                             )}
                           </div>
                           <div className="paper-meta">
-                            <p>Рік: {paper.publication_year || 'Не вказано'}</p>
-                            <p>Цитування: {paper.citation_count || 0}</p>
+                            <p>Year: {paper.publication_year || 'Not Specified'}</p>
+                            <p>Citations: {paper.citation_count || 0}</p>
                             <p>
-                              Автори:{' '}
+                              Authors:{' '}
                               {paper.authors && paper.authors.length > 0
                                 ? paper.authors
                                     .map((author) => author.name || author)
                                     .filter(Boolean)
-                                    .join(', ') || 'Не вказано'
-                                : 'Не вказано'}
+                                    .join(', ') || 'Not Specified'
+                                : 'Not Specified'}
                             </p>
                             {paper.fields_of_study && paper.fields_of_study.length > 0 && (
-                              <p>Галузі: {paper.fields_of_study.join(', ')}</p>
+                              <p>Fields: {paper.fields_of_study.join(', ')}</p>
                             )}
                             {paper.publication_types && paper.publication_types.length > 0 && (
-                              <p>Типи публікацій: {paper.publication_types.join(', ')}</p>
+                              <p>Publication Types: {paper.publication_types.join(', ')}</p>
                             )}
-                            {paper.venue && <p>Видання: {paper.venue}</p>}
+                            {paper.venue && <p>Publication: {paper.venue}</p>}
                             {paper.doi && <p>DOI: {paper.doi}</p>}
                           </div>
                           <div className="paper-abstract">
-                            {paper.abstract || 'Анотація відсутня'}
+                            {paper.abstract || 'Abstract not available'}
                           </div>
                           <div className="paper-actions">
                             <a
@@ -749,7 +719,7 @@ const Dashboard = () => {
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:text-blue-800 text-sm"
                             >
-                              Переглянути статтю
+                              View Paper
                             </a>
                             {paper.pdf_url && (
                               <a
@@ -758,7 +728,7 @@ const Dashboard = () => {
                                 rel="noopener noreferrer"
                                 className="text-blue-600 hover:text-blue-800 text-sm"
                               >
-                                Завантажити PDF
+                                Download PDF
                               </a>
                             )}
                           </div>
@@ -770,10 +740,10 @@ const Dashboard = () => {
                   <div className="text-center py-12">
                     <DocumentTextIcon className="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
                     <p className="text-gray-500 dark:text-gray-400">
-                      Не знайдено результатів для вашого запиту.
+                      No results found for your query.
                     </p>
                     <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
-                      Спробуйте змінити параметри пошуку.
+                      Try changing search parameters.
                     </p>
                   </div>
                 )}
@@ -786,17 +756,17 @@ const Dashboard = () => {
                         disabled={currentPage === 1}
                         className="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                       >
-                        Попередня
+                        Previous
                       </button>
                       <span className="px-3 py-2 border-t border-b border-gray-300 bg-white text-sm font-medium text-gray-700">
-                        Сторінка {currentPage} з {totalPages}
+                        Page {currentPage} of {totalPages}
                       </span>
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
                         className="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                       >
-                        Наступна
+                        Next
                       </button>
                     </nav>
                   </div>

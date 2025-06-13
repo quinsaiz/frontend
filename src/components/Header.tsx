@@ -97,7 +97,7 @@ const Header = () => {
                       </button>
 
                       {isMenuOpen && (
-                        <div className="absolute right-0 mt-2 w-52 bg-surface-light dark:bg-surface-dark rounded-xl shadow-neomorphic-light dark:shadow-neomorphic-dark py-1 z-50 overflow-hidden">
+                        <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-surface-dark rounded-xl shadow-neomorphic-light dark:shadow-neomorphic-dark py-1 z-50 overflow-hidden">
                           <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
                             <div className="flex items-center space-x-3">
                               <div className="flex-shrink-0">
@@ -125,14 +125,14 @@ const Header = () => {
                             ) : (
                               <MoonIcon className="mr-2 h-5 w-5" />
                             )}
-                            Змінити тему
+                            Change theme
                           </button>
                           <button
                             onClick={handleChangePasswordClick}
                             className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
                           >
                             <LockClosedIcon className="mr-2 h-5 w-5" />
-                            Змінити пароль
+                            Change password
                           </button>
                           <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
                           <button
@@ -140,7 +140,7 @@ const Header = () => {
                             className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
                           >
                             <ArrowRightStartOnRectangleIcon className="mr-2 h-5 w-5" />
-                            Вийти
+                            Logout
                           </button>
                         </div>
                       )}

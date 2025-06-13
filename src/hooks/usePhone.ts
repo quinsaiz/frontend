@@ -68,11 +68,11 @@ export const getPhoneErrorMessage = (phone: string): string | null => {
   const cleaned = phone.replace(/\D/g, '');
 
   if (cleaned.length !== 12) {
-    return 'Номер телефону повинен містити 12 цифр';
+    return 'Phone number must contain 12 digits';
   }
 
   if (!cleaned.startsWith('380')) {
-    return 'Номер телефону повинен починатися з 380';
+    return 'Phone number must start with 380';
   }
 
   const operatorCode = cleaned.slice(3, 5);
@@ -92,7 +92,7 @@ export const getPhoneErrorMessage = (phone: string): string | null => {
   ];
 
   if (!validOperatorCodes.includes(operatorCode)) {
-    return 'Невірний код оператора';
+    return 'Invalid operator code';
   }
 
   return null;

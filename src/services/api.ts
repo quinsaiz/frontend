@@ -36,7 +36,7 @@ const handleError = (error: unknown): never => {
     const message = error.response?.data?.message || error.message;
     throw new ApiError(message);
   }
-  throw new ApiError('Сталася невідома помилка');
+  throw new ApiError('An unknown error occurred');
 };
 
 const api = axios.create({
