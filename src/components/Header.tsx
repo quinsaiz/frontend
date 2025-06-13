@@ -28,6 +28,7 @@ const Header = () => {
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -152,7 +153,25 @@ const Header = () => {
                       </button>
 
                       {isMenuOpen && (
-                        <div className="absolute right-0 mt-2 w-48 bg-surface-light dark:bg-surface-dark rounded-xl shadow-neomorphic-light dark:shadow-neomorphic-dark py-1 z-50 overflow-hidden">
+                        <div className="absolute right-0 mt-2 w-64 bg-surface-light dark:bg-surface-dark rounded-xl shadow-neomorphic-light dark:shadow-neomorphic-dark py-1 z-50 overflow-hidden">
+                          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                            <div className="flex items-center space-x-3">
+                              <div className="flex-shrink-0">
+                                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                                  <UserIcon className="h-6 w-6 text-primary" />
+                                </div>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                  {user?.firstName} {user?.lastName}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                  ID: {user?.id}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
                           <button
                             onClick={() => {
                               toggleTheme();

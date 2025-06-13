@@ -11,12 +11,10 @@
     @apply antialiased bg-background-light text-gray-900 dark:bg-background-dark dark:text-gray-100 min-h-screen overflow-x-hidden;
   }
 
-  /* Lock scroll when modal is open */
   body.modal-open {
     @apply overflow-hidden;
   }
 
-  /* Custom scrollbar */
   ::-webkit-scrollbar {
     @apply w-1.5;
   }
@@ -29,12 +27,10 @@
     @apply bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-500 rounded-full transition-colors duration-200;
   }
 
-  /* Selection color */
   ::selection {
     @apply bg-primary/20 text-gray-900 dark:text-white;
   }
 
-  /* Input number arrows */
   input[type='number'] {
     -moz-appearance: textfield;
     appearance: textfield;
@@ -46,7 +42,6 @@
     margin: 0;
   }
 
-  /* Checkbox styles */
   input[type='checkbox'] {
     @apply appearance-none w-4 h-4 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-surface-dark
     focus:outline-none focus:ring-2 focus:ring-primary/50
@@ -62,14 +57,14 @@
 @layer components {
   /* Form styles */
   .input-field {
-    @apply mt-2 pr-10 block w-full px-4 py-1.5 bg-gray-50 dark:bg-background-dark border border-gray-300 dark:border-gray-700 rounded-md shadow-sm 
+    @apply block mt-2 pr-14 w-full px-4 py-1.5 bg-gray-50 dark:bg-background-dark border border-gray-300 dark:border-gray-700 rounded-md shadow-sm 
     focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
     text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400
     transition-all duration-200;
   }
 
   .form-label {
-    @apply block text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-200;
+    @apply block pl-0.5 text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-200;
   }
 
   .form-title {
@@ -103,7 +98,7 @@
   }
   .btn-search {
     @apply absolute right-2 top-1/2 -translate-y-1/2 
-    bg-transparent bg-gray-100 dark:bg-gray-800
+    bg-transparent bg-gray-100 dark:bg-surface-dark
     hover:bg-gray-200 dark:hover:bg-gray-700
     text-gray-700 dark:text-gray-300
     border border-gray-300 dark:border-gray-600
@@ -123,8 +118,8 @@
 
   .btn-filter {
     @apply flex items-center gap-2 px-4 py-2 text-sm
-    bg-gray-50 dark:bg-surface-dark
-    border border-gray-200 dark:border-gray-700
+    bg-white dark:bg-surface-dark
+    border border-gray-400 dark:border-gray-700
     hover:bg-gray-50 dark:hover:bg-gray-700
     rounded-lg transition-all duration-200
     shadow-sm hover:shadow-md justify-center;
@@ -242,27 +237,27 @@
   .filter-input {
     @apply w-full px-4 py-2 text-sm
     bg-white dark:bg-surface-dark
-    border border-gray-200 dark:border-gray-700
+    border border-gray-400 dark:border-gray-700
     rounded-lg transition-all duration-200
     focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
     text-gray-900 dark:text-gray-100
-    placeholder-gray-500 dark:placeholder-gray-400;
+    placeholder-gray-600 dark:placeholder-gray-400;
   }
 
   .subfilter-input {
     @apply w-full px-4 py-2 text-sm
     bg-white dark:bg-background-dark
-    border border-gray-200 dark:border-gray-700
+    border border-gray-400 dark:border-gray-700
     rounded-lg transition-all duration-200
     focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
     text-gray-900 dark:text-gray-100
-    placeholder-gray-500 dark:placeholder-gray-400;
+    placeholder-gray-600 dark:placeholder-gray-400;
   }
 
   .filter-select {
-    @apply w-40 px-4 py-2 text-sm
+    @apply w-40 px-4 py-2.5 text-sm
     bg-white dark:bg-surface-dark
-    border border-gray-200 dark:border-gray-700
+    border border-gray-400 dark:border-gray-700
     rounded-lg transition-all duration-200
     focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
     text-gray-900 dark:text-gray-100;
