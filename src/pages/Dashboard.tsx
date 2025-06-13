@@ -12,6 +12,7 @@ import {
 import { searchService } from '../services/api';
 import { ApiError } from '../services/api';
 import { PreviousSessions } from '../components/PreviousSessions';
+import { sessionService } from '../services/sessionService';
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -172,7 +173,6 @@ const Dashboard = () => {
   };
 
   const pollForResults = async (taskId: string, sessionId: number) => {
-    console.log('Polling check - isSearching:', isSearchingRef.current);
     if (!isSearchingRef.current) {
       console.log('Search was stopped, stopping polling');
       return;
@@ -214,16 +214,14 @@ const Dashboard = () => {
         response.task_status?.status === 'PENDING' ||
         response.should_continue_polling
       ) {
-        console.log('Continuing to poll...');
         if (searchTimeoutRef.current) {
           clearTimeout(searchTimeoutRef.current);
         }
         searchTimeoutRef.current = setTimeout(() => {
-          console.log('Timeout callback - isSearching:', isSearchingRef.current);
           if (isSearchingRef.current) {
             pollForResults(taskId, sessionId);
           }
-        }, 3000);
+        }, 5000);
       } else {
         console.log('Unknown task status');
         setError('Невідомий статус завдання');
@@ -353,9 +351,9 @@ const Dashboard = () => {
 
   const handleLoadSession = async (sessionId: number) => {
     try {
-      console.log('Loading session:', sessionId);
-      await fetchResults(sessionId, 1);
-    } catch (error: unknown) {
+      await sessionService.loadSession(sessionId, setSearchParams, setSearchQuery, fetchResults);
+      setSessionId(sessionId);
+    } catch (error) {
       if (error instanceof ApiError) {
         setError(error.message);
       } else {
@@ -366,17 +364,8 @@ const Dashboard = () => {
 
   const handleExportSession = async (sessionId: number) => {
     try {
-      console.log('Exporting session:', sessionId);
-      const blob = await searchService.exportResults(sessionId, 'csv');
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `search-results-${sessionId}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error: unknown) {
+      await sessionService.exportSession(sessionId, 'csv');
+    } catch (error) {
       if (error instanceof ApiError) {
         setError(error.message);
       } else {
@@ -641,7 +630,7 @@ const Dashboard = () => {
 
           {isLoading && (
             <div className="mt-8 text-center">
-              <p className="text-gray-600 dark:text-gray-400">Пошук в процесі...</p>
+              <p className="text-xl text-gray-600 dark:text-gray-400">Пошук в процесі...</p>
             </div>
           )}
 
@@ -814,6 +803,7 @@ const Dashboard = () => {
             onClose={() => setIsPreviousSessionsOpen(false)}
             onLoadSession={handleLoadSession}
             onExportSession={handleExportSession}
+            mode="dashboard"
           />
         </div>
       </div>

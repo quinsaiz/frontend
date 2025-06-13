@@ -16,6 +16,8 @@ import { PreviousSessions } from './PreviousSessions';
 import { AnimatePresence } from 'framer-motion';
 import { searchService } from '../services/api';
 import type { ScrapingSession } from '../types/search';
+import { sessionService } from '../services/sessionService';
+import { ApiError } from '../services/api';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,6 +25,7 @@ const Header = () => {
   const [showPreviousSessions, setShowPreviousSessions] = useState(false);
   const [previousSessions, setPreviousSessions] = useState<ScrapingSession[]>([]);
   const [isLoadingSessions, setIsLoadingSessions] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -87,20 +90,14 @@ const Header = () => {
 
   const handleLoadSession = async (sessionId: number) => {
     try {
-      // Тут можна додати логіку завантаження результатів сесії
-      console.log('Loading session:', sessionId);
-      // Можливо, треба буде передати sessionId в Dashboard або викликати API
-    } catch (err) {
-      console.error('Error loading session:', err);
-    }
-  };
-
-  const handleExportSession = async (sessionId: number) => {
-    try {
-      // Тут можна додати логіку експорту результатів сесії
-      console.log('Exporting session:', sessionId);
-    } catch (err) {
-      console.error('Error exporting session:', err);
+      await sessionService.checkSession(sessionId);
+      navigate(`/dashboard?session=${sessionId}`);
+    } catch (error: unknown) {
+      if (error instanceof ApiError) {
+        setError(error.message);
+      } else {
+        setError('Сталася помилка при відкритті сесії');
+      }
     }
   };
 
@@ -223,10 +220,18 @@ const Header = () => {
             onClose={() => setShowPreviousSessions(false)}
             sessions={previousSessions}
             onLoadSession={handleLoadSession}
-            onExportSession={handleExportSession}
+            mode="header"
           />
         )}
       </AnimatePresence>
+
+      {error && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mt-2">
+            <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+          </div>
+        </div>
+      )}
     </>
   );
 };

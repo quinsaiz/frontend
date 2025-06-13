@@ -4,7 +4,6 @@ import {
   XMarkIcon,
   CalendarIcon,
   DocumentTextIcon,
-  ArrowDownTrayIcon,
   DocumentMagnifyingGlassIcon,
   DocumentCheckIcon,
   DocumentArrowDownIcon,
@@ -21,14 +20,15 @@ interface PreviousSessionsProps {
   onLoadSession?: (sessionId: number) => void;
   onExportSession?: (sessionId: number) => void;
   sessions?: ScrapingSession[];
+  mode?: 'header' | 'dashboard';
 }
 
 export const PreviousSessions = ({
   isOpen,
   onClose,
   onLoadSession,
-  onExportSession,
   sessions: initialSessions,
+  mode = 'dashboard',
 }: PreviousSessionsProps) => {
   const [sessions, setSessions] = useState<ScrapingSession[]>(initialSessions || []);
   const [isLoading, setIsLoading] = useState(true);
@@ -130,27 +130,9 @@ export const PreviousSessions = ({
       if (error instanceof ApiError) {
         setError(error.message);
       } else {
-        setError('Сталася помилка при завантаженні сесії');
+        setError('Сталася помилка при відкритті сесії');
       }
     }
-  };
-
-  const handleExportSession = async (sessionId: number) => {
-    try {
-      if (onExportSession) {
-        await onExportSession(sessionId);
-      }
-    } catch (error: unknown) {
-      if (error instanceof ApiError) {
-        setError(error.message);
-      } else {
-        setError('Сталася помилка при експорті сесії');
-      }
-    }
-  };
-
-  const formatTitle = (title: string) => {
-    return title.replace(/^\{.*?title:\s*"|"\s*\}.*$/g, '').trim();
   };
 
   if (!isOpen) return null;
@@ -173,9 +155,53 @@ export const PreviousSessions = ({
 
   if (sessions.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-500 dark:text-gray-400">Немає попередніх сесій пошуку.</p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        onClick={handleClose}
+      >
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0, y: 10 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.95, opacity: 0, y: 10 }}
+          transition={{
+            type: 'spring',
+            stiffness: 300,
+            damping: 30,
+            duration: 0.2,
+          }}
+          className="bg-gray-100 dark:bg-background-dark rounded-xl shadow-xl w-full max-w-4xl max-h-[80vh] flex flex-col"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex-none flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              Попередні сесії пошуку
+            </h2>
+            <button
+              onClick={handleClose}
+              className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-all duration-200"
+            >
+              <XMarkIcon className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="p-6 text-center">
+            <p className="text-gray-500 dark:text-gray-400">Немає попередніх сесій пошуку.</p>
+          </div>
+          <div className="flex-none p-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex justify-end">
+              <button
+                onClick={handleClose}
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg transition-all duration-200"
+              >
+                Закрити
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
     );
   }
 
@@ -227,7 +253,7 @@ export const PreviousSessions = ({
                     <div className="flex justify-between items-start">
                       <div className="flex-1 min-w-0">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 break-words line-clamp-2">
-                          {formatTitle(session.title)}
+                          {session.title}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                           {formatDate(session.created_at)}
@@ -327,16 +353,7 @@ export const PreviousSessions = ({
                           className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50 rounded-lg transition-all duration-200"
                         >
                           <DocumentTextIcon className="w-4 h-4" />
-                          Завантажити
-                        </button>
-                      )}
-                      {onExportSession && (
-                        <button
-                          onClick={() => handleExportSession(session.id)}
-                          className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-900/50 rounded-lg transition-all duration-200"
-                        >
-                          <ArrowDownTrayIcon className="w-4 h-4" />
-                          Експортувати
+                          {mode === 'header' ? 'Відкрити сесію' : 'Завантажити'}
                         </button>
                       )}
                     </div>
